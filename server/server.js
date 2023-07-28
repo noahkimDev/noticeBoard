@@ -3,7 +3,7 @@ const app = express();
 const dotenv = require("dotenv");
 
 dotenv.config();
-
+console.log(111);
 const { Sequelize, Model, DataTypes } = require("sequelize");
 const sequelize = new Sequelize(
   process.env.DBNAME,
