@@ -3,6 +3,8 @@ import "./writethenew.css";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import "bootstrap/dist/css/bootstrap.css";
+import { Link } from "react-router-dom";
+
 function Writethenew() {
   return (
     <>
@@ -21,9 +23,11 @@ function Writethenew() {
         <Button variant="outline-dark" className="btn1">
           Submit
         </Button>
-        <Button variant="outline-dark" className="btn2">
-          Back
-        </Button>
+        <Link to="/">
+          <Button variant="outline-dark" className="btn2">
+            Back
+          </Button>
+        </Link>
       </div>
     </>
   );

@@ -4,21 +4,47 @@ import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
+  const navigate = useNavigate();
+  function signUpForm() {
+    navigate("/signup");
+  }
+  function logInForm() {
+    navigate("/login");
+  }
+  function writeTheNewForm() {
+    navigate("/writethenew");
+  }
   return (
     <>
       <h1 className="title">My Board</h1>
       <div className="homeTable">
         <div className="uppersideBtns">
-          <Button type="submit" variant="outline-secondary" className="btn1">
+          <Button
+            type="submit"
+            onClick={writeTheNewForm}
+            variant="outline-secondary"
+            className="btn1"
+          >
             New
           </Button>
           <div>
-            <Button type="submit" variant="outline-secondary" className="btn2">
+            <Button
+              type="submit"
+              variant="outline-secondary"
+              className="btn2"
+              onClick={signUpForm}
+            >
               Sign-up
             </Button>{" "}
-            <Button type="submit" variant="outline-secondary" className="btn2">
+            <Button
+              type="submit"
+              variant="outline-secondary"
+              onClick={logInForm}
+              className="btn2"
+            >
               Log-in
             </Button>
           </div>

@@ -1,46 +1,30 @@
 const express = require("express");
 const app = express();
-const dotenv = require("dotenv");
+const cors = require("cors");
+const { sequelize } = require("./models/index");
+// const bodyParser = require("body-parser");
+const route = require("./router.js");
 
-dotenv.config();
-console.log(111);
-const { Sequelize, Model, DataTypes } = require("sequelize");
-const sequelize = new Sequelize(
-  process.env.DBNAME,
-  process.env.USERNAME23,
-  process.env.PASSWORD,
-  {
-    host: "localhost",
-    dialect: "mysql",
-  }
+sequelize
+  .sync({ alter: true }) //
+  .then(() => {
+    console.log("sequelize-db 연결 성공");
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
 );
 
-try {
-  sequelize.authenticate();
-  console.log("sequelize 연결성공");
-} catch (error) {
-  console.error("sequelize 연결실패", error);
-}
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-const User = sequelize.define("user", {
-  name: DataTypes.TEXT,
-  favoriteColor: {
-    type: DataTypes.TEXT,
-    defaultValue: "green",
-  },
-  age: DataTypes.INTEGER,
-  cash: DataTypes.INTEGER,
-});
-
-(async () => {
-  await sequelize.sync({ force: true });
-  // Code here
-  const jane = User.create({ name: "Jane" });
-  //   console.log(jane instanceof User); // true
-  //   console.log(jane.name); // "Jane"
-  //   await jane.save();
-  //   console.log("Jane was saved to the database!");
-})();
+app.use("/", route);
 
 app.listen(8000, function () {
   console.log("welcome to 8000 server!");
