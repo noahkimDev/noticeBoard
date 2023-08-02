@@ -4,8 +4,11 @@ import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
+import { Link } from "react-router-dom";
+import axios from "axios";
 
 function Login() {
+  function loginSubmit() {}
   return (
     <>
       <h1 className="title">Log-In</h1>
@@ -13,12 +16,16 @@ function Login() {
       <div className="container2">
         <Form noValidate>
           <div className="uppersideBtns">
-            <Button type="submit" variant="outline-success" className="btn1">
-              Back
-            </Button>
-            <Button type="submit" variant="outline-success" className="btn2">
-              Sign-up
-            </Button>
+            <Link to="/">
+              <Button type="submit" variant="outline-success" className="btn1">
+                Home
+              </Button>
+            </Link>
+            <Link to="/signup">
+              <Button type="submit" variant="outline-success" className="btn2">
+                Sign-up
+              </Button>
+            </Link>
           </div>
           <Row className="mb-3 ">
             <Form.Group as={Col} md="14">
@@ -33,7 +40,16 @@ function Login() {
             </Form.Group>
           </Row>
           <div className="lowersideBtn">
-            <Button type="submit" variant="warning" className="btn3" md="14">
+            <Button
+              type="submit"
+              onClick={function (e) {
+                e.preventDefault();
+                loginSubmit();
+              }}
+              variant="warning"
+              className="btn3"
+              md="14"
+            >
               Submit form
             </Button>
           </div>
