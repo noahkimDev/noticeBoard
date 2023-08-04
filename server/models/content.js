@@ -5,6 +5,10 @@ class Content extends Sequelize.Model {
   static initiate(sequelize) {
     return super.init(
       {
+        title: {
+          type: Sequelize.STRING(100),
+          allowNull: false,
+        },
         content: {
           type: Sequelize.TEXT("medium"),
           allowNull: false,
@@ -13,6 +17,10 @@ class Content extends Sequelize.Model {
       { sequelize }
     );
   }
+  static associate(db) {
+    this.belongsTo(db.Member, { foreignKey: "author" });
+  }
 }
+// static association(){}
 
-module.export = Content;
+module.exports = Content;

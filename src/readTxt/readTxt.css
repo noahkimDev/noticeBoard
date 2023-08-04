@@ -1,0 +1,19 @@
+.title {
+  margin-top: 50px;
+  text-align: center;
+}
+
+.container {
+  margin-top: 60px;
+  width: 70%;
+}
+
+.btn1 {
+  margin-right: 10px;
+  width: 100px;
+}
+
+.btn2 {
+  margin-left: 10px;
+  width: 100px;
+}
