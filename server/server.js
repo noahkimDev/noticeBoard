@@ -2,8 +2,8 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const { sequelize } = require("./models/index");
-// const bodyParser = require("body-parser");
 const route = require("./router.js");
+// const bodyParser = require("body-parser");
 
 sequelize
   .sync({ alter: true }) //

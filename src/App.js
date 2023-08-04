@@ -5,6 +5,7 @@ import Home from "./home/home";
 import Login from "./login/login";
 import Signup from "./signup/signup";
 import Writethenew from "./writethenew/writethenew";
+import Readtxt from "./readTxt/readTxt";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/" element={<Home></Home>}></Route>
         <Route path="/login" element={<Login></Login>}></Route>
         <Route path="/signup" element={<Signup></Signup>}></Route>
+        <Route path="/readTxt" element={<Readtxt></Readtxt>}></Route>
         <Route
           path="/writethenew"
           element={<Writethenew></Writethenew>}

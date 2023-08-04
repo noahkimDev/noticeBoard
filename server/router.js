@@ -1,11 +1,27 @@
 const express = require("express");
-const memberDb = require("./models/member");
+const db = require("./models/index");
 const bcrypt = require("bcrypt");
 const path = require("path");
 const router = express.Router();
 
+router.get("/", async (req, res) => {
+  try {
+    let allList;
+    allList = await db.Content.findAll({
+      attributes: ["id", "title", "author", "createdAt"],
+    });
+    console.log(allList);
+    res.json(allList);
+    // res.send("쟂");
+  } catch (error) {
+    console.log(error);
+    res.status(403).send("Bringing the list was failed");
+  }
+});
+
 router.post("/signup", async (req, res) => {
-  const alreadyMember = await memberDb.findOne({
+  // console.log("혹시");
+  const alreadyMember = await db.Member.findOne({
     where: { email: req.body.emailInfo },
   });
 
@@ -18,7 +34,7 @@ router.post("/signup", async (req, res) => {
           console.log(err);
         }
         // Store hash in your password DB.
-        memberDb.create({
+        db.Member.create({
           email: req.body.emailInfo,
           nickname: req.body.nickNameInfo,
           password: hash,
@@ -30,6 +46,20 @@ router.post("/signup", async (req, res) => {
     } catch (error) {
       console.log(error);
     }
+  }
+});
+
+router.post("/writethenew", (req, res) => {
+  // console.log(req.body);
+  try {
+    db.Content.create({
+      title: req.body.title,
+      content: req.body.write,
+    });
+    res.send("submit 완료");
+  } catch (error) {
+    console.log("에러발생", error);
+    res.status(403).send("error났네");
   }
 });
 

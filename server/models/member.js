@@ -20,6 +20,10 @@ class Member extends Sequelize.Model {
       { sequelize }
     );
   }
+  // , { foreignKey: "commenter", sourceKey: "id" }
+  static associate(db) {
+    this.hasMany(db.Content, { foreignKey: "author" });
+  }
 }
 
 module.exports = Member;
