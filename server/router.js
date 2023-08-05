@@ -10,7 +10,7 @@ router.get("/", async (req, res) => {
     allList = await db.Content.findAll({
       attributes: ["id", "title", "author", "createdAt"],
     });
-    console.log(allList);
+    // console.log(allList);
     res.json(allList);
     // res.send("쟂");
   } catch (error) {
@@ -61,6 +61,23 @@ router.post("/writethenew", (req, res) => {
     console.log("에러발생", error);
     res.status(403).send("error났네");
   }
+});
+router.get("/readTxt/:id", async (req, res) => {
+  let chosenData = await db.Content.findOne({
+    where: { id: req.params.id },
+  });
+
+  res.send(chosenData);
+});
+
+router.post("/edit/:id", async (req, res) => {
+  console.log(req.body.newContent);
+  await db.Content.update(
+    { title: req.body.newTitle, content: req.body.newContent },
+    { where: { id: req.params.id } }
+  );
+
+  res.send("update 성공");
 });
 
 // router.use(express.static(path.join(__dirname, "build")));
