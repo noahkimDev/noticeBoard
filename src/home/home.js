@@ -28,17 +28,12 @@ function Home() {
     }
     return array.map((e, i) => (
       <tr key={i}>
-        <td>
-          <Link
-            to="/readTxt"
-            style={{
-              textDecoration: "none",
-              color: "black",
-              textDecorationLine: "none",
-            }}
-          >
-            {e.title}
-          </Link>
+        <td
+          onClick={async function () {
+            await navigate(`/readTxt/${e.id}`);
+          }}
+        >
+          {e.title}
         </td>
         <td>{e.createdAt}</td>
         <td>{e.author}</td>
@@ -47,7 +42,7 @@ function Home() {
   }
 
   function signUpForm() {
-    navigate("/signup");
+    navigate(`/signup`);
   }
 
   function logInForm() {
