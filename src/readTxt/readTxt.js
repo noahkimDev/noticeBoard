@@ -3,24 +3,40 @@ import "./readTxt.css";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import "bootstrap/dist/css/bootstrap.css";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState } from "react";
 function ReadTxt() {
   const { id } = useParams();
+  const navigate = useNavigate();
+
   const [chosenData, setChosenData] = useState("");
   const [isEditing, setIsEditing] = useState(true);
   const [titleEditing, setTitleEditing] = useState("");
   const [contentEditing, setContentEditing] = useState("");
+
+  async function deleteData() {
+    if (window.confirm("do you really want to delete this content?")) {
+      await axios
+        .delete(`http://localhost:8000/delete/${id}`)
+        .then((data) => {
+          console.log(data);
+          alert("completed delete");
+          navigate("/");
+        }) //
+        .catch((err) => console.log(err));
+    }
+  }
   useEffect(() => {
     axios
       .get(`http://localhost:8000/readTxt/${id}`) //
       .then((data) => {
-        console.log(data.data);
+        // console.log(data.data);
         setChosenData(data.data);
       }) //
       .catch((err) => console.log(err));
   }, []);
+
   return (
     <>
       <h1 className="title">Text</h1>
@@ -70,8 +86,9 @@ function ReadTxt() {
               await setIsEditing(true);
               // 공백이 넘어감
               // 아무것도 작성하지 않아도 기존에 있던 값을 보내야함
+
               await axios
-                .post(`http://localhost:8000/edit/${id}`, {
+                .put(`http://localhost:8000/edit/${id}`, {
                   newTitle: !titleEditing ? chosenData.title : titleEditing,
                   newContent: !contentEditing
                     ? chosenData.content
@@ -85,10 +102,12 @@ function ReadTxt() {
             save
           </Button>
         )}
-
+        <Button variant="outline-dark" className="btn1" onClick={deleteData}>
+          Delete
+        </Button>
         <Link to="/">
-          <Button variant="outline-dark" className="btn2">
-            Back
+          <Button variant="outline-dark" className="btn1">
+            Home
           </Button>
         </Link>
       </div>

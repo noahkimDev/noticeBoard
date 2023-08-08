@@ -3,11 +3,12 @@ const db = require("./models/index");
 const bcrypt = require("bcrypt");
 const path = require("path");
 const router = express.Router();
+const { Op } = require("sequelize");
 
 router.get("/", async (req, res) => {
   try {
-    let allList;
-    allList = await db.Content.findAll({
+    // let allList;
+    let allList = await db.Content.findAll({
       attributes: ["id", "title", "author", "createdAt"],
     });
     // console.log(allList);
@@ -49,10 +50,10 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-router.post("/writethenew", (req, res) => {
+router.post("/writethenew", async (req, res) => {
   // console.log(req.body);
   try {
-    db.Content.create({
+    await db.Content.create({
       title: req.body.title,
       content: req.body.write,
     });
@@ -62,24 +63,64 @@ router.post("/writethenew", (req, res) => {
     res.status(403).send("error났네");
   }
 });
+
 router.get("/readTxt/:id", async (req, res) => {
-  let chosenData = await db.Content.findOne({
-    where: { id: req.params.id },
-  });
+  try {
+    let chosenData = await db.Content.findOne({
+      where: { id: req.params.id },
+    });
 
-  res.send(chosenData);
+    res.send(chosenData);
+  } catch (error) {
+    console.log(error);
+    res.status(403).send("reading txt has an error");
+  }
 });
 
-router.post("/edit/:id", async (req, res) => {
-  console.log(req.body.newContent);
-  await db.Content.update(
-    { title: req.body.newTitle, content: req.body.newContent },
-    { where: { id: req.params.id } }
-  );
+router.put("/edit/:id", async (req, res) => {
+  // console.log(req.body.newContent);
+  try {
+    await db.Content.update(
+      { title: req.body.newTitle, content: req.body.newContent },
+      { where: { id: req.params.id } }
+    );
 
-  res.send("update 성공");
+    res.send("update 성공");
+  } catch (error) {
+    console.log(error);
+    res.status(403).send("edit has an error");
+  }
 });
 
+router.delete("/delete/:id", async (req, res) => {
+  // console.log("삭제", req.params.id);
+  try {
+    db.Content.destroy({
+      where: { id: req.params.id },
+    });
+    res.send("completed delete");
+  } catch (error) {
+    console.log(error);
+    res.status(403).send("delete has an error");
+  }
+});
+// router.get("/search", async (req, res) => {
+//   console.log("성공");
+// });
+router.get("/search/:txt", async (req, res) => {
+  console.log(req.params.txt);
+  try {
+    let searchedList = await db.Content.findAll({
+      attributes: ["id", "title", "author", "createdAt"],
+      where: { title: { [Op.like]: `%${req.params.txt}%` } },
+    });
+    console.log(searchedList);
+    res.send(searchedList);
+  } catch (error) {
+    console.log(error);
+    res.status(403).send("searching data has an error");
+  }
+});
 // router.use(express.static(path.join(__dirname, "build")));
 // router.get("*", function (req, res) {
 //   res.sendFile(path.join(__dirname, "build/index.html"));

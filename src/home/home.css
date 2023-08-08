@@ -13,3 +13,9 @@ tr {
   width: 500px;
   margin-top: 50px;
 }
+
+.paging {
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+}
