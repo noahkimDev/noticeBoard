@@ -1,5 +1,6 @@
 import "./home.css";
 
+import { Pagination } from "react-bootstrap";
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
@@ -10,7 +11,13 @@ import axios from "axios";
 
 function Home() {
   const navigate = useNavigate();
+
+  const [searchTxt, setSearchTxt] = useState("");
   const [list, setList] = useState("");
+  const [backupList, setBackupList] = useState("");
+  const [num, setNum] = useState(0);
+  const [rememberPage, setRememberPage] = useState("");
+
   useEffect(() => {
     axios
       .get("http://localhost:8000")
@@ -22,11 +29,14 @@ function Home() {
     console.log("홈 시작");
   }, []);
 
-  function rendering(array) {
+  function rendering(array, num) {
     if (!Array.isArray(array) || array.lengh == 0) {
       return null;
     }
-    return array.map((e, i) => (
+    let usingArr = [...array];
+    // console.log(num);
+    // console.log(usingArr);
+    return usingArr.slice(6 * num, 6 * (num + 1)).map((e, i) => (
       <tr key={i}>
         <td
           onClick={async function () {
@@ -35,20 +45,31 @@ function Home() {
         >
           {e.title}
         </td>
-        <td>{e.createdAt}</td>
+        <td>{e.createdAt.slice(0, 10)}</td>
         <td>{e.author}</td>
       </tr>
     ));
   }
 
+  function search(txt) {
+    axios
+      .get(`http://localhost:8000/search/${txt}`) //
+      .then(async (data) => {
+        // console.log(data.data);
+        await setBackupList([...list]);
+        await setList(data.data);
+      }) //
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
   function signUpForm() {
     navigate(`/signup`);
   }
-
   function logInForm() {
     navigate("/login");
   }
-
   function writeTheNewForm() {
     navigate("/writethenew");
   }
@@ -94,19 +115,92 @@ function Home() {
               <th>Nickname</th>
             </tr>
           </thead>
-          <tbody>{rendering(list)}</tbody>
+          <tbody>{rendering(list, num)}</tbody>
         </Table>
-        <a href="http://www.naver.com" className="paging">
-          [1]
-        </a>
+        <Pagination className="paging">
+          <Pagination.First
+            onClick={function () {
+              if (list.length) {
+                setNum(0);
+              }
+            }}
+          />
+          <Pagination.Prev
+            onClick={function (e) {
+              if (list.length) {
+                if (rememberPage === 1) {
+                  setNum(0);
+                } else {
+                  setNum(rememberPage - 2);
+                  setRememberPage(rememberPage - 1);
+                }
+              }
+            }}
+          />
+          {/* Math.floor가 아니라 무조건 올림으로 해야함*/}
+          {/* 6개 단위로 페이지를 끊을 때, 페이지 갯수가 7개를 넘어갔을 때 바로 페이지가 생기게 하려면 */}
+          {/* 무조건 올림으로 해야함 */}
+          {Array.isArray(list)
+            ? list.slice(0, Math.ceil(list.length / 6)).map((e, i) => (
+                <Pagination.Item
+                  key={i}
+                  onClick={function (e) {
+                    setNum(i);
+                    if (parseInt(e.target.textContent)) {
+                      setRememberPage(parseInt(e.target.textContent));
+                    }
+                  }}
+                >
+                  {i + 1}
+                </Pagination.Item>
+              ))
+            : null}
+          <Pagination.Next
+            onClick={async function (e) {
+              if (list.length) {
+                if (rememberPage === Math.ceil(list.length / 6) - 1) {
+                  // console.log("here", num, rememberPage);
+                  await setNum(rememberPage);
+                  await setRememberPage(rememberPage + 1);
+                } else if (rememberPage < Math.ceil(list.length / 6) - 1) {
+                  await setNum(rememberPage);
+                  await setRememberPage(rememberPage + 1);
+                  // console.log(num, rememberPage);
+                }
+              }
+            }}
+          />
+          <Pagination.Last
+            onClick={function () {
+              if (list.length) {
+                setNum(Math.ceil(list.length / 6) - 1);
+              }
+            }}
+          />
+        </Pagination>
         <div className="searchTitle">
           <InputGroup className="mb-3 ">
             <Form.Control
               placeholder="Search title"
               aria-label="Search title"
               aria-describedby="basic-addon2"
+              onChange={async function (e) {
+                await setSearchTxt(e.target.value);
+              }}
             />
-            <Button variant="outline-secondary" id="button-addon2">
+            <Button
+              variant="outline-secondary"
+              id="button-addon2"
+              onClick={async function () {
+                console.log("check?", searchTxt);
+                if (searchTxt) {
+                  console.log("something");
+                  await search(searchTxt);
+                } else {
+                  setList(backupList);
+                }
+              }}
+            >
               Search
             </Button>
           </InputGroup>
