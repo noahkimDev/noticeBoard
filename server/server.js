@@ -3,7 +3,8 @@ const app = express();
 const cors = require("cors");
 const { sequelize } = require("./models/index");
 const route = require("./router.js");
-// const bodyParser = require("body-parser");
+const auth = require("./auth.js");
+const cookieParser = require("cookie-parser");
 
 sequelize
   .sync({ alter: true }) //
@@ -14,6 +15,7 @@ sequelize
     console.log(err);
   });
 
+app.use(cookieParser());
 app.use(
   cors({
     origin: "http://localhost:3000",
@@ -24,6 +26,7 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use("/auth", auth);
 app.use("/", route);
 
 app.listen(8000, function () {

@@ -11,6 +11,9 @@ router.get("/", async (req, res) => {
     let allList = await db.Content.findAll({
       attributes: ["id", "title", "author", "createdAt"],
     });
+    allList = allList.sort(function (a, b) {
+      return b.id - a.id;
+    });
     // console.log(allList);
     res.json(allList);
     // res.send("쟂");
@@ -108,12 +111,13 @@ router.delete("/delete/:id", async (req, res) => {
 //   console.log("성공");
 // });
 router.get("/search/:txt", async (req, res) => {
-  console.log(req.params.txt);
+  console.log("파람 확인", req.params.txt);
   try {
     let searchedList = await db.Content.findAll({
       attributes: ["id", "title", "author", "createdAt"],
       where: { title: { [Op.like]: `%${req.params.txt}%` } },
     });
+    searchedList.sort((a, b) => b.id - a.id);
     console.log(searchedList);
     res.send(searchedList);
   } catch (error) {

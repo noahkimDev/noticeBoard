@@ -24,6 +24,16 @@ function Signup() {
       nickNameInfo: nickNameInfo,
     };
     //
+    if (
+      emailInfo === "" ||
+      emailCheckInfo === "" ||
+      passwordCheckInfo === "" ||
+      passwordInfo === "" ||
+      nickNameInfo === ""
+    ) {
+      return alert("there is vacant input value");
+    }
+
     if (emailInfo === emailCheckInfo) {
       if (passwordInfo === passwordCheckInfo) {
         axios
@@ -127,9 +137,9 @@ function Signup() {
               variant="warning"
               className="btn3"
               md="14"
-              onClick={function (e) {
-                e.preventDefault();
-                signupSubmit();
+              onClick={async function (e) {
+                await e.preventDefault();
+                await signupSubmit();
               }}
             >
               Submit form
