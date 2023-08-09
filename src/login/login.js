@@ -9,7 +9,10 @@ import axios from "axios";
 
 function Login() {
   function loginSubmit() {
-    // axios.
+    axios
+      .get("http://localhost:8000/auth/login") //
+      .then((data) => console.log(data)) //
+      .catch((err) => console.log(err));
   }
   return (
     <>

@@ -3,6 +3,7 @@ import "./home.css";
 import { Pagination } from "react-bootstrap";
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
+import Badge from "react-bootstrap/Badge";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import { useNavigate, Link } from "react-router-dom";
@@ -21,16 +22,21 @@ function Home() {
   useEffect(() => {
     axios
       .get("http://localhost:8000")
-      .then((data) => {
+      .then(async (data) => {
         console.log(data.data);
-        setList(data.data);
+        // let wow = data.data.sort(function (a, b) {
+        //   return b.id - a.id;
+        // });
+        // console.log("wow", wow);
+        await setList(data.data);
+        await setBackupList(data.data);
       })
       .catch((err) => console.log(err));
     console.log("홈 시작");
   }, []);
 
   function rendering(array, num) {
-    if (!Array.isArray(array) || array.lengh == 0) {
+    if (!Array.isArray(array) || array.length == 0) {
       return null;
     }
     let usingArr = [...array];
@@ -55,8 +61,6 @@ function Home() {
     axios
       .get(`http://localhost:8000/search/${txt}`) //
       .then(async (data) => {
-        // console.log(data.data);
-        await setBackupList([...list]);
         await setList(data.data);
       }) //
       .catch((err) => {
@@ -141,19 +145,40 @@ function Home() {
           {/* 6개 단위로 페이지를 끊을 때, 페이지 갯수가 7개를 넘어갔을 때 바로 페이지가 생기게 하려면 */}
           {/* 무조건 올림으로 해야함 */}
           {Array.isArray(list)
-            ? list.slice(0, Math.ceil(list.length / 6)).map((e, i) => (
-                <Pagination.Item
-                  key={i}
-                  onClick={function (e) {
-                    setNum(i);
-                    if (parseInt(e.target.textContent)) {
-                      setRememberPage(parseInt(e.target.textContent));
-                    }
-                  }}
-                >
-                  {i + 1}
-                </Pagination.Item>
-              ))
+            ? list.slice(0, Math.ceil(list.length / 6)).map((e, i) => {
+                if (i < 5) {
+                  return (
+                    <Pagination.Item
+                      key={i}
+                      onClick={function (e) {
+                        setNum(i);
+                        if (parseInt(e.target.textContent)) {
+                          setRememberPage(parseInt(e.target.textContent));
+                        }
+                      }}
+                    >
+                      {i + 1}
+                    </Pagination.Item>
+                  );
+                } else if (i === Math.ceil(list.length / 6) - 1) {
+                  return (
+                    <Pagination key={`ellipsis-and-last-${i}`}>
+                      <Pagination.Ellipsis />
+                      <Pagination.Item
+                        key={`last-item-${i}`}
+                        onClick={function (e) {
+                          setNum(i);
+                          if (parseInt(e.target.textContent)) {
+                            setRememberPage(parseInt(e.target.textContent));
+                          }
+                        }}
+                      >
+                        {i + 1}
+                      </Pagination.Item>
+                    </Pagination>
+                  );
+                }
+              })
             : null}
           <Pagination.Next
             onClick={async function (e) {
@@ -178,6 +203,12 @@ function Home() {
             }}
           />
         </Pagination>
+        {rememberPage ? (
+          <Badge bg="light" text="dark">
+            {rememberPage} / {Math.ceil(list.length / 6)} page
+          </Badge>
+        ) : null}
+
         <div className="searchTitle">
           <InputGroup className="mb-3 ">
             <Form.Control
@@ -192,12 +223,12 @@ function Home() {
               variant="outline-secondary"
               id="button-addon2"
               onClick={async function () {
-                console.log("check?", searchTxt);
                 if (searchTxt) {
-                  console.log("something");
+                  // console.log("something", searchTxt);
                   await search(searchTxt);
                 } else {
-                  setList(backupList);
+                  // console.log("nothing", backupList);
+                  await setList(backupList);
                 }
               }}
             >
