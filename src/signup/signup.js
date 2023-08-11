@@ -37,7 +37,9 @@ function Signup() {
     if (emailInfo === emailCheckInfo) {
       if (passwordInfo === passwordCheckInfo) {
         axios
-          .post("http://localhost:8000/signup", data) //
+          .post("http://localhost:8000/signup", data, {
+            withCredentials: true,
+          }) //
           .then((res) => {
             console.log("응답확인");
             alert("회원가입완료!");

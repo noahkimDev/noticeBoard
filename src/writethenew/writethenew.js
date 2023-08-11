@@ -14,10 +14,16 @@ function Writethenew() {
 
   function writeTheNewSubmit() {
     axios
-      .post("http://localhost:8000/writethenew", {
-        title: title,
-        write: write,
-      }) //
+      .post(
+        "http://localhost:8000/writethenew",
+        {
+          title: title,
+          write: write,
+        },
+        {
+          withCredentials: true,
+        }
+      ) //
       .then((data) => {
         console.log("작성된 글 저장완료", data);
         navigate("/");

@@ -4,14 +4,36 @@ import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+
 import axios from "axios";
 
 function Login() {
-  function loginSubmit() {
-    axios
-      .get("http://localhost:8000/auth/login") //
-      .then((data) => console.log(data)) //
+  const navigate = useNavigate();
+  const [writtenEmail, setWrittenEmail] = useState("");
+  const [writtenPw, setWrittenPw] = useState("");
+
+  async function loginSubmit() {
+    await axios
+      .post(
+        "http://localhost:8000/auth/cookieLogin",
+        { email: writtenEmail, pw: writtenPw },
+        {
+          withCredentials: true,
+        }
+      ) //
+      .then((data) => {
+        if (data.data === "success") {
+          navigate("/");
+        }
+        if (data.data === "fail") {
+          console.log(data.data);
+          alert("wrong login information");
+        }
+
+        // navigate("/");
+      }) //
       .catch((err) => console.log(err));
   }
   return (
@@ -35,13 +57,25 @@ function Login() {
           <Row className="mb-3 ">
             <Form.Group as={Col} md="14">
               <Form.Label>E-mail</Form.Label>
-              <Form.Control required type="text" />
+              <Form.Control
+                required
+                type="text"
+                onChange={function (e) {
+                  setWrittenEmail(e.target.value);
+                }}
+              />
             </Form.Group>
           </Row>
           <Row className="mb-3 ">
             <Form.Group as={Col} md="14">
               <Form.Label>Password</Form.Label>
-              <Form.Control type="password" required />
+              <Form.Control
+                type="password"
+                required
+                onChange={function (e) {
+                  setWrittenPw(e.target.value);
+                }}
+              />
             </Form.Group>
           </Row>
           <div className="lowersideBtn">
@@ -55,7 +89,7 @@ function Login() {
               className="btn3"
               md="14"
             >
-              Submit form
+              Submit form(cookie version)
             </Button>
           </div>
         </Form>

@@ -18,18 +18,18 @@ function Home() {
   const [backupList, setBackupList] = useState("");
   const [num, setNum] = useState(0);
   const [rememberPage, setRememberPage] = useState("");
+  const [memberOrNot, setMemberOrNot] = useState(false);
 
   useEffect(() => {
     axios
-      .get("http://localhost:8000")
+      .get("http://localhost:8000/", {
+        withCredentials: true,
+      })
       .then(async (data) => {
         console.log(data.data);
-        // let wow = data.data.sort(function (a, b) {
-        //   return b.id - a.id;
-        // });
-        // console.log("wow", wow);
-        await setList(data.data);
-        await setBackupList(data.data);
+        await setList(data.data.allList);
+        await setBackupList(data.data.allList);
+        await setMemberOrNot(data.data.areYouMember);
       })
       .catch((err) => console.log(err));
     console.log("홈 시작");
@@ -59,7 +59,9 @@ function Home() {
 
   function search(txt) {
     axios
-      .get(`http://localhost:8000/search/${txt}`) //
+      .get(`http://localhost:8000/search/${txt}`, {
+        withCredentials: true,
+      }) //
       .then(async (data) => {
         await setList(data.data);
       }) //
@@ -92,22 +94,39 @@ function Home() {
             New
           </Button>
           <div>
-            <Button
-              type="submit"
-              variant="outline-secondary"
-              className="btn2"
-              onClick={signUpForm}
-            >
-              Sign-up
-            </Button>{" "}
-            <Button
-              type="submit"
-              variant="outline-secondary"
-              onClick={logInForm}
-              className="btn2"
-            >
-              Log-in
-            </Button>
+            {memberOrNot ? (
+              <>
+                <Button
+                  type="submit"
+                  variant="outline-secondary"
+                  className="btn4"
+                  onClick={function () {
+                    console.log("회원임");
+                  }}
+                >
+                  Log-out
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  type="submit"
+                  variant="outline-secondary"
+                  className="btn2"
+                  onClick={signUpForm}
+                >
+                  Sign-up
+                </Button>{" "}
+                <Button
+                  type="submit"
+                  variant="outline-secondary"
+                  onClick={logInForm}
+                  className="btn2"
+                >
+                  Log-in
+                </Button>
+              </>
+            )}
           </div>
         </div>
 

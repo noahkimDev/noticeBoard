@@ -18,7 +18,9 @@ function ReadTxt() {
   async function deleteData() {
     if (window.confirm("do you really want to delete this content?")) {
       await axios
-        .delete(`http://localhost:8000/delete/${id}`)
+        .delete(`http://localhost:8000/delete/${id}`, {
+          withCredentials: true,
+        })
         .then((data) => {
           console.log(data);
           alert("completed delete");
@@ -29,7 +31,9 @@ function ReadTxt() {
   }
   useEffect(() => {
     axios
-      .get(`http://localhost:8000/readTxt/${id}`) //
+      .get(`http://localhost:8000/readTxt/${id}`, {
+        withCredentials: true,
+      }) //
       .then((data) => {
         // console.log(data.data);
         setChosenData(data.data);
@@ -88,12 +92,18 @@ function ReadTxt() {
               // 아무것도 작성하지 않아도 기존에 있던 값을 보내야함
 
               await axios
-                .put(`http://localhost:8000/edit/${id}`, {
-                  newTitle: !titleEditing ? chosenData.title : titleEditing,
-                  newContent: !contentEditing
-                    ? chosenData.content
-                    : contentEditing,
-                }) //
+                .put(
+                  `http://localhost:8000/edit/${id}`,
+                  {
+                    newTitle: !titleEditing ? chosenData.title : titleEditing,
+                    newContent: !contentEditing
+                      ? chosenData.content
+                      : contentEditing,
+                  },
+                  {
+                    withCredentials: true,
+                  }
+                ) //
                 .then((data) => console.log(data))
                 .catch((err) => console.log(err));
             }}
