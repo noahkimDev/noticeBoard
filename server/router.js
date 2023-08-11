@@ -4,10 +4,12 @@ const bcrypt = require("bcrypt");
 const path = require("path");
 const router = express.Router();
 const { Op } = require("sequelize");
+const authentication = require("./authentication");
 
 router.get("/", async (req, res) => {
   try {
-    // let allList;
+    console.log("홈에서 쿠키 확인", req.headers.cookie);
+
     let allList = await db.Content.findAll({
       attributes: ["id", "title", "author", "createdAt"],
     });
@@ -15,7 +17,10 @@ router.get("/", async (req, res) => {
       return b.id - a.id;
     });
     // console.log(allList);
-    res.json(allList);
+    res.json({
+      allList: allList,
+      areYouMember: authentication(req).areYouMember,
+    });
     // res.send("쟂");
   } catch (error) {
     console.log(error);
@@ -24,7 +29,7 @@ router.get("/", async (req, res) => {
 });
 
 router.post("/signup", async (req, res) => {
-  // console.log("혹시");
+  console.log("회원가입");
   const alreadyMember = await db.Member.findOne({
     where: { email: req.body.emailInfo },
   });
@@ -54,16 +59,40 @@ router.post("/signup", async (req, res) => {
 });
 
 router.post("/writethenew", async (req, res) => {
+  console.log("새글쓰기", req.headers);
   // console.log(req.body);
-  try {
-    await db.Content.create({
-      title: req.body.title,
-      content: req.body.write,
-    });
-    res.send("submit 완료");
-  } catch (error) {
-    console.log("에러발생", error);
-    res.status(403).send("error났네");
+  if (authentication(req).areYouMember) {
+    console.log("샬라샬라");
+    try {
+      let nickName = await db.Member.findOne({
+        attributes: ["nickname"],
+        where: { email: authentication(req).cookies.email },
+      });
+
+      console.log("닉네임왔느", nickName.dataValues.nickname);
+      await db.Content.create({
+        title: req.body.title,
+        content: req.body.write,
+        // author: nickName.dataValues.nickname,
+        author: "나야나",
+      });
+
+      return res.send("submit 완료");
+    } catch (error) {
+      console.log("에러발생", error);
+      res.status(403).send("error났네");
+    }
+  } else {
+    try {
+      await db.Content.create({
+        title: req.body.title,
+        content: req.body.write,
+      });
+      return res.send("submit 완료");
+    } catch (error) {
+      console.log("에러발생", error);
+      res.status(403).send("error났네");
+    }
   }
 });
 
@@ -115,6 +144,7 @@ router.get("/search/:txt", async (req, res) => {
   try {
     let searchedList = await db.Content.findAll({
       attributes: ["id", "title", "author", "createdAt"],
+      // 아래 txt를 포함하는 조건(앞뒤 상관없이 포함만 하면)
       where: { title: { [Op.like]: `%${req.params.txt}%` } },
     });
     searchedList.sort((a, b) => b.id - a.id);

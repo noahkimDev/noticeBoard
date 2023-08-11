@@ -18,7 +18,7 @@ class Content extends Sequelize.Model {
     );
   }
   static associate(db) {
-    this.belongsTo(db.Member, { foreignKey: "author" });
+    this.belongsTo(db.Member, { foreignKey: "author", targetKey: "nickname" });
   }
 }
 // static association(){}
