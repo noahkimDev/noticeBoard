@@ -5,7 +5,7 @@ class Member extends Sequelize.Model {
       {
         email: {
           type: Sequelize.STRING(100),
-          unique: true,
+          // unique: true,
           allowNull: false,
         },
         nickname: {
@@ -22,7 +22,7 @@ class Member extends Sequelize.Model {
   }
   // , { foreignKey: "commenter", sourceKey: "id" }
   static associate(db) {
-    this.hasMany(db.Content, { foreignKey: "author", sourceKey: "nickname" });
+    this.hasMany(db.Content, { foreignKey: "author", sourceKey: "id" });
   }
 }
 

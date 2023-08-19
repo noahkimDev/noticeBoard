@@ -20,6 +20,8 @@
   margin-top: 60px;
   display: flex;
   justify-content: left;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .btn3 {

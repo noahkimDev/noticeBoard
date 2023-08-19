@@ -11,6 +11,7 @@ function ReadTxt() {
   const navigate = useNavigate();
 
   const [chosenData, setChosenData] = useState("");
+  const [sameUser, setSameUser] = useState("");
   const [isEditing, setIsEditing] = useState(true);
   const [titleEditing, setTitleEditing] = useState("");
   const [contentEditing, setContentEditing] = useState("");
@@ -34,9 +35,10 @@ function ReadTxt() {
       .get(`http://localhost:8000/readTxt/${id}`, {
         withCredentials: true,
       }) //
-      .then((data) => {
-        // console.log(data.data);
-        setChosenData(data.data);
+      .then(async (data) => {
+        console.log("왜또", data.data);
+        await setChosenData(data.data.chosenData);
+        await setSameUser(data.data.sameUser);
       }) //
       .catch((err) => console.log(err));
   }, []);
@@ -73,48 +75,61 @@ function ReadTxt() {
             />
           </Form.Group>
         </Form>
-        {isEditing ? (
-          <Button
-            variant="outline-dark"
-            onClick={async function () {
-              await setIsEditing(false);
-            }}
-            className="btn1"
-          >
-            Edit
-          </Button>
-        ) : (
-          <Button
-            variant="outline-dark"
-            onClick={async function () {
-              await setIsEditing(true);
-              // 공백이 넘어감
-              // 아무것도 작성하지 않아도 기존에 있던 값을 보내야함
+        {sameUser ? (
+          <>
+            {isEditing ? (
+              <Button
+                variant="outline-dark"
+                onClick={async function () {
+                  await setIsEditing(false);
+                }}
+                className="btn1"
+              >
+                Edit
+              </Button>
+            ) : (
+              <Button
+                variant="outline-dark"
+                onClick={async function () {
+                  await setIsEditing(true);
+                  // 공백이 넘어감
+                  // 아무것도 작성하지 않아도 기존에 있던 값을 보내야함
 
-              await axios
-                .put(
-                  `http://localhost:8000/edit/${id}`,
-                  {
-                    newTitle: !titleEditing ? chosenData.title : titleEditing,
-                    newContent: !contentEditing
-                      ? chosenData.content
-                      : contentEditing,
-                  },
-                  {
-                    withCredentials: true,
-                  }
-                ) //
-                .then((data) => console.log(data))
-                .catch((err) => console.log(err));
-            }}
-            className="btn1"
-          >
-            save
-          </Button>
+                  await axios
+                    .put(
+                      `http://localhost:8000/edit/${id}`,
+                      {
+                        newTitle: !titleEditing
+                          ? chosenData.title
+                          : titleEditing,
+                        newContent: !contentEditing
+                          ? chosenData.content
+                          : contentEditing,
+                      },
+                      {
+                        withCredentials: true,
+                      }
+                    ) //
+                    .then((data) => console.log(data))
+                    .catch((err) => console.log(err));
+                }}
+                className="btn1"
+              >
+                save
+              </Button>
+            )}
+            <Button
+              variant="outline-dark"
+              className="btn1"
+              onClick={deleteData}
+            >
+              Delete
+            </Button>
+          </>
+        ) : (
+          <></>
         )}
-        <Button variant="outline-dark" className="btn1" onClick={deleteData}>
-          Delete
-        </Button>
+
         <Link to="/">
           <Button variant="outline-dark" className="btn1">
             Home
