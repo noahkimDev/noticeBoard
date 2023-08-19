@@ -1,27 +1,62 @@
 const express = require("express");
 const db = require("./models/index");
 const bcrypt = require("bcrypt");
-const path = require("path");
 const router = express.Router();
 const { Op } = require("sequelize");
 const authentication = require("./authentication");
+const { checkJwtAccess } = require("./jwtController/tokenFunc");
 
-router.get("/", async (req, res) => {
+router.get("/", checkJwtAccess, async (req, res) => {
   try {
-    console.log("홈에서 쿠키 확인", req.headers.cookie);
+    console.log("www", req.check);
+    // console.log("홈에서 쿠키 확인", req.headers.cookie);
+    // console.log("홈에서 세션 확인", req.session);
+    let memberChkWithSession = false;
+    // console.log("로그인 여부 확인", req.session.member);
 
-    let allList = await db.Content.findAll({
-      attributes: ["id", "title", "author", "createdAt"],
-    });
-    allList = allList.sort(function (a, b) {
-      return b.id - a.id;
-    });
-    // console.log(allList);
-    res.json({
-      allList: allList,
-      areYouMember: authentication(req).areYouMember,
-    });
-    // res.send("쟂");
+    // session 확인
+    // if (req.session.member) {
+
+    // if (true) {
+    /* req.check는 checkJwtAccess에서 왓음*/
+    if (req.check) {
+      // 삭제 필요
+      //  token확인값 들어와야함
+      console.log("로그인 이미 했음");
+      memberChkWithSession = req.check;
+
+      let allList = await db.Content.findAll({
+        include: db.Member,
+        attributes: ["id", "title", "author", "createdAt"],
+      });
+      allList = allList.sort(function (a, b) {
+        return b.id - a.id;
+      });
+
+      res.json({
+        allList: allList,
+        // 쿠키 방식
+        // areYouMember: authentication(req).areYouMember,
+
+        // 세션 방식
+        areYouMember: memberChkWithSession,
+      });
+    } else {
+      // req.sesson.member이 undefired일 때
+      console.log("로그인 안했음");
+      let allList = await db.Content.findAll({
+        include: db.Member,
+        attributes: ["id", "title", "author", "createdAt"],
+      });
+      allList = allList.sort(function (a, b) {
+        return b.id - a.id;
+      });
+      res.json({
+        allList: allList,
+        areYouMember: memberChkWithSession,
+      });
+    }
+    // }
   } catch (error) {
     console.log(error);
     res.status(403).send("Bringing the list was failed");
@@ -58,56 +93,66 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-router.post("/writethenew", async (req, res) => {
-  console.log("새글쓰기", req.headers);
-  // console.log(req.body);
-  if (authentication(req).areYouMember) {
-    console.log("샬라샬라");
-    try {
-      let nickName = await db.Member.findOne({
-        attributes: ["nickname"],
-        where: { email: authentication(req).cookies.email },
-      });
+// router.post("/writethenew", async (req, res) => {
+//   // console.log("새글쓰기", req.body.authorEmail);
+//   // console.log(req.body);
+//   console.log(req.session.member);
+//   // if (authentication(req).areYouMember) { // 쿠키
+//   if (req.session.member) {
+//     // session
+//     try {
+//       // let nickName = await db.Member.findOne({
+//       // attributes: ["nickname"],
+//       // where: { email: req.body.authorEmail },
+//       // });
+//       console.log("확인", req.session.author);
+//       // console.log( nickName);
+//       await db.Content.create({
+//         title: req.body.title,
+//         content: req.body.write,
+//         author: req.session.member,
+//       });
 
-      console.log("닉네임왔느", nickName.dataValues.nickname);
-      await db.Content.create({
-        title: req.body.title,
-        content: req.body.write,
-        // author: nickName.dataValues.nickname,
-        author: "나야나",
-      });
+//       return res.send("submit 완료");
+//     } catch (error) {
+//       console.log("에러발생", error);
+//       res.status(403).send("error");
+//     }
+//   } else {
+//     console.log("쿠키없는 경우");
+//     try {
+//       await db.Content.create({
+//         title: req.body.title,
+//         content: req.body.write,
+//       });
+//       return res.send("submit 완료");
+//     } catch (error) {
+//       console.log("에러발생", error);
+//       res.status(403).send("error났네");
+//     }
+//   }
+// });
 
-      return res.send("submit 완료");
-    } catch (error) {
-      console.log("에러발생", error);
-      res.status(403).send("error났네");
-    }
-  } else {
-    try {
-      await db.Content.create({
-        title: req.body.title,
-        content: req.body.write,
-      });
-      return res.send("submit 완료");
-    } catch (error) {
-      console.log("에러발생", error);
-      res.status(403).send("error났네");
-    }
-  }
-});
+// router.get("/readTxt/:id", async (req, res) => {
+//   console.log("지금유저", req.session.member);
 
-router.get("/readTxt/:id", async (req, res) => {
-  try {
-    let chosenData = await db.Content.findOne({
-      where: { id: req.params.id },
-    });
-
-    res.send(chosenData);
-  } catch (error) {
-    console.log(error);
-    res.status(403).send("reading txt has an error");
-  }
-});
+//   try {
+//     let chosenData = await db.Content.findOne({
+//       include: db.Member,
+//       where: { id: req.params.id },
+//     });
+//     console.log("플리즈", chosenData.author);
+//     // res.send(chosenData);
+//     if (req.session.member == chosenData.author) {
+//       res.json({ chosenData: chosenData, sameUser: true });
+//     } else {
+//       res.json({ chosenData: chosenData, sameUser: false });
+//     }
+//   } catch (error) {
+//     console.log(error);
+//     res.status(403).send("reading txt has an error");
+//   }
+// });
 
 router.put("/edit/:id", async (req, res) => {
   // console.log(req.body.newContent);

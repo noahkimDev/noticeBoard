@@ -26,22 +26,34 @@ function Home() {
         withCredentials: true,
       })
       .then(async (data) => {
-        console.log(data.data);
+        console.log("확인", data.data);
         await setList(data.data.allList);
         await setBackupList(data.data.allList);
+        // await setMemberOrNot(false);
         await setMemberOrNot(data.data.areYouMember);
       })
       .catch((err) => console.log(err));
     console.log("홈 시작");
   }, []);
-
+  function logout() {
+    axios
+      .get("http://localhost:8000/auth/logout", {
+        withCredentials: true,
+      }) //
+      .then((data) => {
+        console.log("로그인성공?", data);
+        setMemberOrNot(false);
+        // console.log("로그아웃", boolean);
+      }) //
+      .catch((err) => console.error(err));
+  }
   function rendering(array, num) {
     if (!Array.isArray(array) || array.length == 0) {
       return null;
     }
     let usingArr = [...array];
     // console.log(num);
-    // console.log(usingArr);
+    // console.log(usingArr[0].Member);
     return usingArr.slice(6 * num, 6 * (num + 1)).map((e, i) => (
       <tr key={i}>
         <td
@@ -52,7 +64,7 @@ function Home() {
           {e.title}
         </td>
         <td>{e.createdAt.slice(0, 10)}</td>
-        <td>{e.author}</td>
+        <td>{e.Member ? e.Member.nickname : e.author}</td>
       </tr>
     ));
   }
@@ -100,8 +112,8 @@ function Home() {
                   type="submit"
                   variant="outline-secondary"
                   className="btn4"
-                  onClick={function () {
-                    console.log("회원임");
+                  onClick={async function () {
+                    await logout();
                   }}
                 >
                   Log-out
