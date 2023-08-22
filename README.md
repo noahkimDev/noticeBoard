@@ -1,11 +1,11 @@
 # 게시판 만들기
 
-### 기능구현
+### - 기능구현
 1. 게시글 쓰기, 읽기, 수정, 삭제
 2. 검색기능
 3. 회원가입, JWT 로그인, 로그아웃 구현
 
-### Stack
+### - Stack
 <div>
   <h4>Front-End</h4>
   <img src="https://img.shields.io/badge/react-61DAFB?style=for-the-badge&logo=react&logoColor=black">
