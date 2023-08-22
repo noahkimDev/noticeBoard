@@ -19,7 +19,7 @@ function Home() {
   const [num, setNum] = useState(0);
   const [rememberPage, setRememberPage] = useState("");
   const [memberOrNot, setMemberOrNot] = useState(false);
-
+  const [whoAreYou, setWhoAreYou] = useState("");
   useEffect(() => {
     axios
       .get("http://localhost:8000/", {
@@ -29,26 +29,29 @@ function Home() {
         console.log("확인", data.data);
         await setList(data.data.allList);
         await setBackupList(data.data.allList);
+        await setWhoAreYou(data.data.loginInfo);
         // await setMemberOrNot(false);
         await setMemberOrNot(data.data.areYouMember);
       })
       .catch((err) => console.log(err));
     console.log("홈 시작");
   }, []);
+
   function logout() {
     axios
       .get("http://localhost:8000/auth/logout", {
         withCredentials: true,
       }) //
       .then((data) => {
-        console.log("로그인성공?", data);
+        console.log("로그아웃 성공", data);
         setMemberOrNot(false);
+        setWhoAreYou("");
         // console.log("로그아웃", boolean);
       }) //
       .catch((err) => console.error(err));
   }
   function rendering(array, num) {
-    if (!Array.isArray(array) || array.length == 0) {
+    if (!Array.isArray(array) || array.length === 0) {
       return null;
     }
     let usingArr = [...array];
@@ -95,6 +98,8 @@ function Home() {
   return (
     <>
       <h1 className="title">My Board</h1>
+      <h6 className="title">Hello! {whoAreYou}</h6>
+
       <div className="homeTable">
         <div className="uppersideBtns">
           <Button

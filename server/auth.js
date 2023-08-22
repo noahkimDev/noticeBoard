@@ -15,6 +15,7 @@ const {
 
 router.get("/logout", async (req, res) => {
   //-----------쿠키 로그아웃 방식
+
   // await res.clearCookie("email");
   // await res.clearCookie("password");
   // if (!req.headers.cookies) {
@@ -25,6 +26,7 @@ router.get("/logout", async (req, res) => {
   // }
 
   //----------세션 로그아웃 방식
+
   // try {
   //   req.session.destroy(function (err) {
   //     if (err) {
@@ -35,7 +37,15 @@ router.get("/logout", async (req, res) => {
   // } catch (error) {
   //   res.status(403).send("delete session data failed");
   // }
-  res.send("gg");
+
+  //--------jwt 로그아웃 방식(쿠키에 담긴 토큰)
+  try {
+    await res.cookie("accessToken2", "");
+    await res.cookie("refreshToken2", "");
+    await res.send("logout success");
+  } catch (error) {
+    res.status(403).json(error);
+  }
 });
 ///////////////////////
 //TOKEN
