@@ -127,7 +127,7 @@ function Login() {
             </Form.Group>
           </Row>
           <div className="lowersideBtn">
-            <Button
+            {/* <Button
               type="submit"
               onClick={function (e) {
                 e.preventDefault();
@@ -150,7 +150,7 @@ function Login() {
               md="14"
             >
               Submit form(session version)
-            </Button>
+            </Button> */}
             <Button
               type="submit"
               onClick={function (e) {
@@ -163,84 +163,6 @@ function Login() {
             >
               Submit form(jwt version)
             </Button>
-            {/* <Button
-              type="submit"
-              onClick={function (e) {
-                e.preventDefault();
-                axios
-                  .get(
-                    "http://localhost:8000/auth/accessToken",
-                    {},
-                    {
-                      withCredentials: true,
-                    }
-                  ) //
-                  .then((data) => console.log(data));
-              }}
-              variant="info"
-              className="btn3"
-              md="14"
-            >
-              accesstoken
-            </Button>
-            <Button
-              type="submit"
-              onClick={function (e) {
-                e.preventDefault();
-                axios
-                  .get("http://localhost:8000/auth/refreshToken", {
-                    withCredentials: true,
-                  }) //
-                  .then((data) => console.log(data));
-              }}
-              variant="info"
-              className="btn3"
-              md="14"
-            >
-              refreshtoken
-            </Button>
-            <Button
-              type="submit"
-              onClick={function (e) {
-                e.preventDefault();
-                axios
-                  .post(
-                    "http://localhost:8000/auth/jwtlogout",
-                    { msg: "logout" },
-                    {
-                      withCredentials: true,
-                    }
-                  ) //
-                  .then((data) => console.log(data));
-              }}
-              variant="warning"
-              className="btn3"
-              md="14"
-            >
-              logout
-            </Button>
-            <Button
-              type="submit"
-              onClick={function (e) {
-                e.preventDefault();
-                axios
-                  .get("http://localhost:8000/auth/success", {
-                    withCredentials: true,
-                  }) //
-                  .then((data) => {
-                    if (data.data) {
-                      console.log("로그인 상태");
-                    } else {
-                      console.log("로그인 풀렸네");
-                    }
-                  });
-              }}
-              variant="warning"
-              className="btn3"
-              md="14"
-            >
-              Success
-            </Button> */}
           </div>
         </Form>
       </div>

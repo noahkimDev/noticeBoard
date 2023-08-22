@@ -22,7 +22,7 @@ router.get("/", checkJwtAccess, async (req, res) => {
     if (req.check) {
       // 삭제 필요
       //  token확인값 들어와야함
-      console.log("로그인 이미 했음");
+      console.log("로그인 이미 했음", req.loginInfo);
       memberChkWithSession = req.check;
 
       let allList = await db.Content.findAll({
@@ -40,6 +40,7 @@ router.get("/", checkJwtAccess, async (req, res) => {
 
         // 세션 방식
         areYouMember: memberChkWithSession,
+        loginInfo: req.loginInfo.nickname,
       });
     } else {
       // req.sesson.member이 undefired일 때
@@ -93,66 +94,73 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-// router.post("/writethenew", async (req, res) => {
-//   // console.log("새글쓰기", req.body.authorEmail);
-//   // console.log(req.body);
-//   console.log(req.session.member);
-//   // if (authentication(req).areYouMember) { // 쿠키
-//   if (req.session.member) {
-//     // session
-//     try {
-//       // let nickName = await db.Member.findOne({
-//       // attributes: ["nickname"],
-//       // where: { email: req.body.authorEmail },
-//       // });
-//       console.log("확인", req.session.author);
-//       // console.log( nickName);
-//       await db.Content.create({
-//         title: req.body.title,
-//         content: req.body.write,
-//         author: req.session.member,
-//       });
+router.post("/writethenew", checkJwtAccess, async (req, res) => {
+  // console.log("새글쓰기", req.body.authorEmail);
+  // console.log(req.body);
+  // console.log(req.session.member);
+  // if (authentication(req).areYouMember) { // 쿠키
+  // if (req.session.member) {
+  console.log(req.check);
+  if (req.check) {
+    console.log("여기;는?");
+    // session
+    try {
+      // let nickName = await db.Member.findOne({
+      // attributes: ["nickname"],
+      // where: { email: req.body.authorEmail },
+      // });
+      // console./og("확인", req.session.author);
+      // console.log( nickName);
+      await db.Content.create({
+        title: req.body.title,
+        content: req.body.write,
+        // author: req.session.member,
+        // foreign키는 숫자값의 데이터를 할당해야함.
+        author: req.loginInfo.id,
+      });
 
-//       return res.send("submit 완료");
-//     } catch (error) {
-//       console.log("에러발생", error);
-//       res.status(403).send("error");
-//     }
-//   } else {
-//     console.log("쿠키없는 경우");
-//     try {
-//       await db.Content.create({
-//         title: req.body.title,
-//         content: req.body.write,
-//       });
-//       return res.send("submit 완료");
-//     } catch (error) {
-//       console.log("에러발생", error);
-//       res.status(403).send("error났네");
-//     }
-//   }
-// });
+      return res.send("submit 완료");
+    } catch (error) {
+      console.log("에러발생", error);
+      res.status(403).send("error");
+    }
+  } else {
+    // console.log("쿠키없는 경우");
+    console.log("유효한 jwt토큰이 없는 경우");
+    try {
+      await db.Content.create({
+        title: req.body.title,
+        content: req.body.write,
+      });
+      return res.send("author없이 submit 완료");
+    } catch (error) {
+      console.log("에러발생", error);
+      res.status(403).send("error났네");
+    }
+  }
+});
 
-// router.get("/readTxt/:id", async (req, res) => {
-//   console.log("지금유저", req.session.member);
+router.get("/readTxt/:id", checkJwtAccess, async (req, res) => {
+  // console.log("지금유저", req.session.member);
 
-//   try {
-//     let chosenData = await db.Content.findOne({
-//       include: db.Member,
-//       where: { id: req.params.id },
-//     });
-//     console.log("플리즈", chosenData.author);
-//     // res.send(chosenData);
-//     if (req.session.member == chosenData.author) {
-//       res.json({ chosenData: chosenData, sameUser: true });
-//     } else {
-//       res.json({ chosenData: chosenData, sameUser: false });
-//     }
-//   } catch (error) {
-//     console.log(error);
-//     res.status(403).send("reading txt has an error");
-//   }
-// });
+  try {
+    let chosenData = await db.Content.findOne({
+      include: db.Member,
+      where: { id: req.params.id },
+    });
+    console.log("플리즈", chosenData.author);
+    // res.send(chosenData);
+    // if (req.session.member == chosenData.author) { // session 관련
+    if (req.loginInfo.nickname == chosenData.author) {
+      res.json({ chosenData: chosenData, sameUser: true });
+    } else {
+      res.json({ chosenData: chosenData, sameUser: false });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(403).send("reading txt has an error");
+  }
+});
 
 router.put("/edit/:id", async (req, res) => {
   // console.log(req.body.newContent);

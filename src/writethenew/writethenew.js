@@ -14,7 +14,7 @@ function Writethenew() {
   let [title, setTitle] = useState("");
   let [write, setWrite] = useState("");
   // 쿠키사용할 때
-  const cookieInfo = Cookies.get("email");
+  // const cookieInfo = Cookies.get("email");
   function writeTheNewSubmit() {
     // console.log("쿠키쿠키", cookieInfo);
     axios
@@ -29,9 +29,9 @@ function Writethenew() {
           withCredentials: true,
         }
       ) //
-      .then((data) => {
+      .then(async (data) => {
         console.log("작성된 글 저장완료", data);
-        navigate("/");
+        await navigate("/");
       })
       .catch((err) => {
         console.log(err);
