@@ -1,12 +1,12 @@
 # 게시판 만들기
 
-### - 기능구현
-1. 게시글 쓰기, 읽기, 수정&삭제(해당 글 작성자만 실행 가능)
-2. 글제목으로 게시글 검색
-3. 회원가입, JWT 로그인, 로그아웃 구현
+### 1. 기능구현
+1.1 게시글 쓰기, 읽기, 수정&삭제(해당 글 작성자만 실행 가능)
+1.2 글제목으로 게시글 검색
+1.3 회원가입, JWT 로그인, 로그아웃 구현
    
 
-### * Stack
+### 2. Stack
 <div>
   <h4>Front-End</h4>
   <img src="https://img.shields.io/badge/react-61DAFB?style=for-the-badge&logo=react&logoColor=black">
@@ -25,7 +25,7 @@
 </div>  
 
 
-### Database Schema
+### 3. Database Schema
 <img src="https://github.com/noahkimDev/noticeboard/assets/68933325/7627e8e7-5ec4-4770-80ea-11691292e465" width="600" height="400">
 
 
