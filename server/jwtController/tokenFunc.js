@@ -98,7 +98,7 @@ async function checkJwtAccess(req, res, next) {
       next();
     } catch (error) {
       // refreshToken의 유효성이 실패했을 때
-      console.log("둘다 유효기간 지남");
+      // console.log("둘다 유효기간 지남 || 로그인 안한 상태");
       req.check = false;
       // req.loginInfo = { id: "", nickname: "", email: "" };
 

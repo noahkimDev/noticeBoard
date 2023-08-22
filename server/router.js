@@ -100,9 +100,8 @@ router.post("/writethenew", checkJwtAccess, async (req, res) => {
   // console.log(req.session.member);
   // if (authentication(req).areYouMember) { // 쿠키
   // if (req.session.member) {
-  console.log(req.check);
+  // console.log(req.check);
   if (req.check) {
-    console.log("여기;는?");
     // session
     try {
       // let nickName = await db.Member.findOne({
@@ -135,30 +134,34 @@ router.post("/writethenew", checkJwtAccess, async (req, res) => {
       return res.send("author없이 submit 완료");
     } catch (error) {
       console.log("에러발생", error);
-      res.status(403).send("error났네");
+      res.status(403).send("error");
     }
   }
 });
 
 router.get("/readTxt/:id", checkJwtAccess, async (req, res) => {
   // console.log("지금유저", req.session.member);
-
   try {
     let chosenData = await db.Content.findOne({
       include: db.Member,
       where: { id: req.params.id },
     });
-    console.log("플리즈", chosenData.author);
     // res.send(chosenData);
     // if (req.session.member == chosenData.author) { // session 관련
-    if (req.loginInfo.nickname == chosenData.author) {
+    if (req.loginInfo.nickname === chosenData.Member.nickname) {
       res.json({ chosenData: chosenData, sameUser: true });
     } else {
       res.json({ chosenData: chosenData, sameUser: false });
     }
   } catch (error) {
     console.log(error);
-    res.status(403).send("reading txt has an error");
+    let chosenData = await db.Content.findOne({
+      include: db.Member,
+      where: { id: req.params.id },
+    });
+    res.json({ chosenData: chosenData, sameUser: false });
+
+    // res.status(403).send("reading txt has an error");
   }
 });
 
@@ -193,7 +196,7 @@ router.delete("/delete/:id", async (req, res) => {
 //   console.log("성공");
 // });
 router.get("/search/:txt", async (req, res) => {
-  console.log("파람 확인", req.params.txt);
+  // console.log("파람 확인", req.params.txt);
   try {
     let searchedList = await db.Content.findAll({
       attributes: ["id", "title", "author", "createdAt"],
