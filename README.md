@@ -23,3 +23,11 @@
   <img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white">
   <img src="https://img.shields.io/badge/sequelize-E95420?style=for-the-badge&logo=sequelize&logoColor=white">
 </div>  
+
+
+### Database Schema
+<img src="https://github.com/noahkimDev/noticeboard/assets/68933325/7627e8e7-5ec4-4770-80ea-11691292e465" width="600" height="400">
+
+
+
+
