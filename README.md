@@ -6,8 +6,10 @@
 1.2 글제목으로 게시글 검색
 <br>
 1.3 회원가입, JWT 로그인, 로그아웃 구현
-   
 
+![image](https://github.com/noahkimDev/noticeboard/assets/68933325/69817934-723e-44c7-bee2-bbb931237d43)
+
+<img src="https://github.com/noahkimDev/noticeboard/assets/68933325/69817934-723e-44c7-bee2-bbb931237d43" width="600" height="400">
 ### 2. Stack
 <div>
   <h4>Front-End</h4>
