@@ -8,6 +8,8 @@
 1.3 회원가입, JWT 로그인, 로그아웃 구현
 
 <img src="https://github.com/noahkimDev/noticeboard/assets/68933325/69817934-723e-44c7-bee2-bbb931237d43" width="600" height="600">
+![image](https://github.com/noahkimDev/noticeboard/assets/68933325/dd38d0bf-4a86-4d30-85dc-f58e16528a27)
+
 <br>
 
 ### 2. Stack
