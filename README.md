@@ -11,9 +11,7 @@
 <br>
 <br>
 <img src="https://github.com/noahkimDev/noticeboard/assets/68933325/dd38d0bf-4a86-4d30-85dc-f58e16528a27" width="600" height="600">
-
 <br>
-
 ### 2. Stack
 <div>
   <h4>Front-End</h4>
