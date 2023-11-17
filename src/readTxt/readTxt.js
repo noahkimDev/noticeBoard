@@ -36,7 +36,7 @@ function ReadTxt() {
         withCredentials: true,
       }) //
       .then(async (data) => {
-        console.log("왜또", data.data);
+        console.log(data.data);
         await setChosenData(data.data.chosenData);
         await setSameUser(data.data.sameUser);
       }) //
